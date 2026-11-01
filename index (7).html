@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Помогу собрать ПК</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.6}
+header{background:linear-gradient(135deg,#1a2332,#0d1117);padding:40px 20px;text-align:center;border-bottom:2px solid #2ea043}
+header h1{font-size:2.2em;color:#2ea043}
+header p{color:#8b949e;margin-top:8px}
+.wrap{max-width:1100px;margin:0 auto;padding:30px 20px}
+h2{color:#2ea043;margin:30px 0 15px;border-bottom:1px solid #30363d;padding-bottom:8px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:20px;margin-bottom:20px}
+label{display:block;margin:12px 0 5px;color:#8b949e;font-size:.95em}
+select{width:100%;padding:10px;background:#0d1117;color:#e6edf3;border:1px solid #30363d;border-radius:6px;font-size:1em}
+.verdict{margin-top:15px;padding:12px;border-radius:8px;background:#1c2a1e;border:1px solid #2ea043}
+.game{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:15px;margin-bottom:15px}
+.game h3{color:#79c0ff;margin-bottom:10px}
+.profile{padding:10px 12px;border-radius:6px;margin-bottom:8px;background:#0d1117;border:1px solid #30363d}
+.profile b{color:#e6edf3}
+.profile .fps{color:#79c0ff;font-weight:bold}
+.profile.rec{background:#1c2a1e;border:1px solid #2ea043}
+.profile.rec::after{content:" ← рекомендую";color:#2ea043;font-weight:bold;font-size:.9em}
+.tip{background:#161b22;border-left:3px solid #2ea043;border-radius:6px;padding:12px 15px;margin-bottom:10px}
+footer{text-align:center;padding:25px;color:#8b949e;border-top:1px solid #30363d;margin-top:40px}
+button{background:#238636;color:#fff;border:none;padding:12px 25px;border-radius:6px;font-size:1em;cursor:pointer;margin-top:15px}
+button:hover{background:#2ea043}
+</style>
+</head>
+<body>
+<header>
+<h1>Помогу собрать ПК</h1>
+<p>Калькулятор FPS: подберите железо и узнайте, сколько кадров даст каждая игра</p>
+</header>
+<div class="wrap">
+<div class="card">
+<h2>Ваше железо</h2>
+<label for="cpu">Процессор</label>
+<select id="cpu"></select>
+<label for="gpu">Видеокарта</label>
+<select id="gpu"></select>
+<label for="ram">Оперативная память</label>
+<select id="ram"></select>
+<label for="res">Разрешение экрана</label>
+<select id="res"></select>
+<div class="verdict" id="verdict"></div>
+</div>
+<h2>Игры и настройки</h2>
+<div id="games"></div>
+<h2>Советы по сборке</h2>
+<div class="tip">Процессор и видеокарта должны быть одного класса: мощная видеокарта со слабым процессором не раскроется, и наоборот.</div>
+<div class="tip">Для игр берите минимум 16 ГБ ОЗУ в двухканальном режиме (2×8 ГБ) — это заметно поднимает FPS.</div>
+<div class="tip">Блок питания берите с запасом 30–40% к потреблению системы — он не должен работать на пределе.</div>
+<div class="tip">SSD обязателен: на HDD игры будут грузиться в разы дольше, а открытые миры — подгружаться с фризами.</div>
+</div>
+<footer>Помогу собрать ПК — калькулятор FPS. Значения приблизительные, для оценки.</footer>
+<script>
+var DATA = {"gpus": [["NVIDIA GT 710", 3], ["NVIDIA GT 730", 4], ["NVIDIA GT 1030", 8], ["NVIDIA GTX 750 Ti", 14], ["NVIDIA GTX 950", 17], ["NVIDIA GTX 960", 22], ["NVIDIA GTX 1050", 24], ["NVIDIA GTX 1050 Ti", 29], ["NVIDIA GTX 1060 3GB", 36], ["NVIDIA GTX 1060 6GB", 41], ["NVIDIA GTX 1070", 55], ["NVIDIA GTX 1070 Ti", 61], ["NVIDIA GTX 1080", 66], ["NVIDIA GTX 1080 Ti", 82], ["NVIDIA GTX 1630", 18], ["NVIDIA GTX 1650", 35], ["NVIDIA GTX 1650 Super", 46], ["NVIDIA GTX 1660", 50], ["NVIDIA GTX 1660 Super", 57], ["NVIDIA GTX 1660 Ti", 60], ["NVIDIA RTX 2060", 66], ["NVIDIA RTX 2060 Super", 74], ["NVIDIA RTX 2070", 79], ["NVIDIA RTX 2070 Super", 85], ["NVIDIA RTX 2080", 91], ["NVIDIA RTX 2080 Super", 96], ["NVIDIA RTX 2080 Ti", 105], ["NVIDIA RTX 3050", 52], ["NVIDIA RTX 3060", 100], ["NVIDIA RTX 3060 Ti", 118], ["NVIDIA RTX 3070", 133], ["NVIDIA RTX 3070 Ti", 142], ["NVIDIA RTX 3080", 166], ["NVIDIA RTX 3080 Ti", 180], ["NVIDIA RTX 3090", 187], ["NVIDIA RTX 3090 Ti", 200], ["NVIDIA RTX 4060", 110], ["NVIDIA RTX 4060 Ti", 130], ["NVIDIA RTX 4070", 170], ["NVIDIA RTX 4070 Super", 185], ["NVIDIA RTX 4070 Ti", 205], ["NVIDIA RTX 4070 Ti Super", 225], ["NVIDIA RTX 4080", 245], ["NVIDIA RTX 4080 Super", 260], ["NVIDIA RTX 4090", 310], ["NVIDIA RTX 5060", 125], ["NVIDIA RTX 5060 Ti", 140], ["NVIDIA RTX 5070", 190], ["NVIDIA RTX 5070 Ti", 235], ["NVIDIA RTX 5080", 270], ["NVIDIA RTX 5090", 330], ["AMD RX 470", 45], ["AMD RX 480", 50], ["AMD RX 550", 15], ["AMD RX 560", 28], ["AMD RX 570", 47], ["AMD RX 580", 55], ["AMD RX 590", 60], ["AMD RX 5500 XT", 52], ["AMD RX 5600 XT", 75], ["AMD RX 5700", 85], ["AMD RX 5700 XT", 92], ["AMD RX 6600", 78], ["AMD RX 6600 XT", 95], ["AMD RX 6650 XT", 100], ["AMD RX 6700 XT", 115], ["AMD RX 6750 XT", 120], ["AMD RX 6800", 135], ["AMD RX 6800 XT", 155], ["AMD RX 6900 XT", 170], ["AMD RX 6950 XT", 180], ["AMD RX 7600", 105], ["AMD RX 7600 XT", 110], ["AMD RX 7700 XT", 140], ["AMD RX 7800 XT", 165], ["AMD RX 7900 GRE", 190], ["AMD RX 7900 XT", 210], ["AMD RX 7900 XTX", 235], ["AMD RX 9060 XT", 135], ["AMD RX 9070", 200], ["AMD RX 9070 XT", 230], ["Intel Arc A380", 35], ["Intel Arc A580", 70], ["Intel Arc A750", 85], ["Intel Arc A770", 95], ["Intel Arc B570", 80], ["Intel Arc B580", 100], ["Встроенная Vega 7", 12], ["Встроенная Vega 8", 13], ["Встроенная UHD 630", 5], ["Встроенная UHD 730", 8], ["Встроенная UHD 770", 11], ["Встроенная Iris Xe", 14], ["Встроенная Radeon 680M", 18], ["Встроенная Radeon 780M", 24], ["Встроенная Radeon 890M", 30]], "cpus": [["AMD FX-6300", 18], ["AMD FX-8350", 22], ["AMD A6-7400K", 10], ["AMD A8-9600", 14], ["AMD A10-7860K", 15], ["Intel Core i3-4130", 25], ["Intel Core i5-4460", 32], ["Intel Core i7-4770", 40], ["Intel Core i7-4790K", 44], ["Intel Core i3-6100", 35], ["Intel Core i5-7400", 45], ["Intel Core i5-8400", 60], ["Intel Core i5-9400F", 65], ["Intel Core i5-9600K", 72], ["Intel Core i7-8700", 80], ["Intel Core i7-9700K", 86], ["Intel Core i9-9900K", 94], ["Intel Core i3-10100F", 58], ["Intel Core i5-10400F", 75], ["Intel Core i5-10600KF", 88], ["Intel Core i7-10700F", 92], ["Intel Core i7-10700K", 98], ["Intel Core i9-10850K", 103], ["Intel Core i9-10900K", 105], ["Intel Core i3-12100F", 85], ["Intel Core i5-12400F", 110], ["Intel Core i5-12600KF", 128], ["Intel Core i7-12700F", 130], ["Intel Core i7-12700K", 138], ["Intel Core i9-12900K", 148], ["Intel Core i3-13100F", 92], ["Intel Core i5-13400F", 122], ["Intel Core i5-13600K", 150], ["Intel Core i7-13700K", 162], ["Intel Core i9-13900K", 180], ["Intel Core i5-14600KF", 155], ["Intel Core i7-14700KF", 170], ["Intel Core i9-14900K", 185], ["Intel Core Ultra 5 245K", 150], ["Intel Core Ultra 7 265K", 170], ["Intel Core Ultra 9 285K", 185], ["AMD Ryzen 3 1200", 40], ["AMD Ryzen 3 1300X", 45], ["AMD Ryzen 5 1600", 58], ["AMD Ryzen 5 1600AF", 62], ["AMD Ryzen 5 2600", 68], ["AMD Ryzen 5 2600X", 72], ["AMD Ryzen 3 3100", 75], ["AMD Ryzen 3 3300X", 82], ["AMD Ryzen 5 3500", 80], ["AMD Ryzen 5 3600", 100], ["AMD Ryzen 5 3600X", 103], ["AMD Ryzen 7 3700X", 110], ["AMD Ryzen 7 3800X", 112], ["AMD Ryzen 9 3900X", 120], ["AMD Ryzen 9 3950X", 126], ["AMD Ryzen 5 5600", 115], ["AMD Ryzen 5 5600X", 120], ["AMD Ryzen 7 5700X", 130], ["AMD Ryzen 7 5700X3D", 145], ["AMD Ryzen 7 5800X", 135], ["AMD Ryzen 7 5800X3D", 150], ["AMD Ryzen 9 5900X", 145], ["AMD Ryzen 9 5950X", 152], ["AMD Ryzen 5 7600", 145], ["AMD Ryzen 5 7600X", 150], ["AMD Ryzen 7 7700X", 160], ["AMD Ryzen 7 7800X3D", 185], ["AMD Ryzen 9 7900X", 165], ["AMD Ryzen 9 7950X", 180], ["AMD Ryzen 9 7950X3D", 190], ["AMD Ryzen 5 9600X", 160], ["AMD Ryzen 7 9700X", 170], ["AMD Ryzen 9 9900X", 178], ["AMD Ryzen 9 9950X", 192], ["AMD Ryzen 7 9800X3D", 195], ["AMD Ryzen 9 9950X3D", 200]], "rams": [["8 ГБ DDR4-2666", 0.85, 0.85], ["16 ГБ DDR4-2666", 0.95, 0.95], ["16 ГБ DDR4-3200", 1.0, 1.0], ["32 ГБ DDR4-3200", 1.0, 1.05], ["16 ГБ DDR5-5600", 1.02, 1.05], ["32 ГБ DDR5-6000", 1.05, 1.12], ["32 ГБ DDR5-6000 CL30", 1.07, 1.18]], "res": [["1920x1080 (Full HD)", 1.0], ["2560x1440 (2K)", 0.7], ["3840x2160 (4K)", 0.42]], "games": [["CS2", [["Максимальный FPS", 0.4, 0.55], ["Баланс", 0.7, 0.75], ["Максимальное качество", 1.0, 0.9]]], ["Valorant", [["Максимальный FPS", 0.2, 0.3], ["Баланс", 0.35, 0.45], ["Максимальное качество", 0.6, 0.6]]], ["Dota 2", [["Максимальный FPS", 0.3, 0.4], ["Баланс", 0.5, 0.55], ["Максимальное качество", 0.8, 0.7]]], ["Fortnite", [["Максимальный FPS", 0.45, 0.5], ["Баланс", 0.75, 0.65], ["Максимальное качество", 1.2, 0.8]]], ["GTA V", [["Максимальный FPS", 0.4, 0.45], ["Баланс", 0.7, 0.6], ["Максимальное качество", 1.1, 0.75]]], ["Cyberpunk 2077", [["Максимальный FPS", 1.4, 0.8], ["Баланс", 2.0, 0.9], ["Максимальное качество", 3.0, 1.0]]], ["Call of Duty: Warzone", [["Максимальный FPS", 0.9, 0.9], ["Баланс", 1.3, 1.0], ["Максимальное качество", 1.9, 1.1]]], ["Apex Legends", [["Максимальный FPS", 0.5, 0.55], ["Баланс", 0.85, 0.7], ["Максимальное качество", 1.3, 0.85]]], ["PUBG", [["Максимальный FPS", 0.6, 0.7], ["Баланс", 1.0, 0.85], ["Максимальное качество", 1.5, 1.0]]], ["Escape from Tarkov", [["Максимальный FPS", 0.8, 1.2], ["Баланс", 1.2, 1.4], ["Максимальное качество", 1.8, 1.6]]], ["Red Dead Redemption 2", [["Максимальный FPS", 1.1, 0.7], ["Баланс", 1.6, 0.85], ["Максимальное качество", 2.4, 1.0]]], ["The Witcher 3", [["Максимальный FPS", 0.7, 0.5], ["Баланс", 1.1, 0.65], ["Максимальное качество", 1.7, 0.8]]]]};
+function el(id){return document.getElementById(id)}
+function fill(id,arr,defName){var s=el(id);s.innerHTML="";for(var i=0;i<arr.length;i++){var o=document.createElement("option");o.value=i;o.textContent=arr[i][0];if(defName&&arr[i][0].indexOf(defName)>=0){s.value=i}if(i===0&&!defName){o.selected=true}s.appendChild(o)}}
+function calc(){
+  try{
+    var cpu=DATA.cpus[+el("cpu").value]||DATA.cpus[0];
+    var gpu=DATA.gpus[+el("gpu").value]||DATA.gpus[0];
+    var ram=DATA.rams[+el("ram").value]||DATA.rams[0];
+    var res=DATA.res[+el("res").value]||DATA.res[0];
+    el("games").innerHTML="";
+    var gpuAll=[],cpuAll=[];
+    for(var g=0;g<DATA.games.length;g++){
+      var game=DATA.games[g];
+      var div=document.createElement("div");div.className="game";
+      var h=document.createElement("h3");h.textContent=game[0];div.appendChild(h);
+      var best=0,bestI=0;
+      var rows=[];
+      for(var p=0;p<game[1].length;p++){
+        var pr=game[1][p];
+        var gpuFps=gpu[1]/pr[1]*res[1]*ram[1];
+        var cpuFps=cpu[1]/pr[2]*ram[2]*1.6;
+        var fps=Math.min(gpuFps,cpuFps);
+        if(fps<1){fps=1}
+        rows.push({name:pr[0],fps:fps});
+        if(fps>best){best=fps;bestI=p}
+      }
+      for(var r=0;r<rows.length;r++){
+        var d=document.createElement("div");
+        d.className="profile"+(r===bestI?" rec":"");
+        d.innerHTML="<b>"+rows[r].name+"</b> — <span class='fps'>~"+Math.round(rows[r].fps)+" FPS</span>";
+        div.appendChild(d);
+      }
+      el("games").appendChild(div);
+      gpuAll.push(gpu[1]/game[1][1][1]*res[1]*ram[1]);
+      cpuAll.push(cpu[1]/game[1][1][2]*ram[2]*1.6);
+    }
+    var avgG=gpuAll.reduce(function(a,b){return a+b},0)/gpuAll.length;
+    var avgC=cpuAll.reduce(function(a,b){return a+b},0)/cpuAll.length;
+    var v=el("verdict");
+    if(avgC<avgG*0.75){v.innerHTML="<b>Узкое место: процессор.</b> Видеокарта простаивает — апгрейд процессора даст больше FPS."}
+    else if(avgG<avgC*0.75){v.innerHTML="<b>Узкое место: видеокарта.</b> Процессор мощнее, чем нужно — можно смело брать видеокарту выше."}
+    else{v.innerHTML="<b>Сбалансированная связка.</b> Процессор и видеокарта раскрывают друг друга."}
+  }catch(e){
+    el("games").innerHTML="<div class='game'>Ошибка: "+e.message+"</div>";
+  }
+}
+fill("cpu",DATA.cpus,"Ryzen 5 3600");
+fill("gpu",DATA.gpus,"RX 5700 XT");
+fill("ram",DATA.rams,"16 ГБ DDR4-3200");
+fill("res",DATA.res,"1920x1080");
+el("cpu").addEventListener("change",calc);
+el("gpu").addEventListener("change",calc);
+el("ram").addEventListener("change",calc);
+el("res").addEventListener("change",calc);
+calc();
+</script>
+</body>
+</html>
